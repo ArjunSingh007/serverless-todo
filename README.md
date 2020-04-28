@@ -1,4 +1,4 @@
-# serverless-todo Capstone
+# serverless-todo capstone
 
 ## Running the application from client
 1. Download the code: git clone repositry.
