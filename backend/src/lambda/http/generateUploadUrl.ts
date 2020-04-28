@@ -28,7 +28,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const url = s3.getSignedUrl('putObject',{
     Bucket: bucketName,
     Key: imageId,
-    Expires: urlExpiration
+    Expires: parseInt(urlExpiration)
   })
 
   const attachmentUrl = `https://${bucketName}.s3.amazonaws.com/${imageId}`
