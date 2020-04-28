@@ -104,6 +104,26 @@ functions:
           - s3:PutObject
           - s3:GetObject
         Resource: arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*
+  ImageUpdate:
+    handler: src/lambda/dynamodb/imageUpdate.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt TodoDynamoDBTable.StreamArn
+    iamRoleStatements:
+      - Effect: 'Allow'
+        Action:
+          - s3:PutObject
+          - s3:GetObject
+        Resource: arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*
+      - Effect: 'Allow'
+        Action:
+          - dynamodb:DescribeStream
+          - dynamodb:GetShardIterator
+          - dynamodb:ListStreams
+          - dynamodb:GetRecords
+        Resource: arn:aws:dynamodb:us-east-1:*:table/${self:provider.environment.TODO_TABLE}/stream/*
+
 
 resources:
   Resources:
@@ -120,6 +140,8 @@ resources:
           - AttributeName: todoId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
         TableName: ${self:provider.environment.TODO_TABLE}
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.USERID_INDEX} 
